@@ -9,5 +9,36 @@ import {ITicketMarketplace} from "./interfaces/ITicketMarketplace.sol";
 import "hardhat/console.sol";
 
 contract TicketMarketplace is ITicketMarketplace {
-    // your code goes here (you can do it!)
+    TicketNFT public nftContract;
+    address payable public owner;
+    address public ERC20Address;
+
+    constructor(address _erc20TokenAddress) {
+        ERC20Address = _erc20TokenAddress; // set ERC20 token address
+        owner = payable(msg.sender);
+    }
+
+    function createEvent(uint128 maxTickets, uint256 pricePerTicket, uint256 pricePerTicketERC20) external override {
+    }
+
+    function setMaxTicketsForEvent(uint128 eventId, uint128 newMaxTickets) external override {
+    }
+
+    function setPriceForTicketETH(uint128 eventId, uint256 price) external override {
+    }
+
+    function setPriceForTicketERC20(uint128 eventId, uint256 price) external override {
+    }
+
+    function buyTickets(uint128 eventId, uint128 ticketCount) payable external override {
+    }
+
+    function buyTicketsERC20(uint128 eventId, uint128 ticketCount) external override {
+    }
+
+    function setERC20Address(address newERC20Address) external override {
+    }
+
+    function _processTicketPurchase(uint128 eventId, uint128 ticketCount) private {
+    }
 }
