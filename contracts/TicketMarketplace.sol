@@ -9,17 +9,21 @@ import {ITicketMarketplace} from "./interfaces/ITicketMarketplace.sol";
 import "hardhat/console.sol";
 
 contract TicketMarketplace is ITicketMarketplace {
-    TicketNFT public nftContract;
-    address payable public owner;
+    ITicketNFT public ticketNFT;
+    address public owner;
     address public ERC20Address;
+    address public nftContract;
+    uint128 public currentEventId = 0;
 
     constructor(address _erc20TokenAddress) {
-        ERC20Address = _erc20TokenAddress; // set ERC20 token address
-        owner = payable(msg.sender);
+        ERC20Address = _erc20TokenAddress;  // set ERC20 token address
+        ticketNFT = new TicketNFT(""); // to-ask: empty string?
+        nftContract = address(ticketNFT);
+        owner = msg.sender;
     }
 
     function createEvent(uint128 maxTickets, uint256 pricePerTicket, uint256 pricePerTicketERC20) external override {
-    }
+   }
 
     function setMaxTicketsForEvent(uint128 eventId, uint128 newMaxTickets) external override {
     }
@@ -28,7 +32,7 @@ contract TicketMarketplace is ITicketMarketplace {
     }
 
     function setPriceForTicketERC20(uint128 eventId, uint256 price) external override {
-    }
+     }
 
     function buyTickets(uint128 eventId, uint128 ticketCount) payable external override {
     }
@@ -40,5 +44,5 @@ contract TicketMarketplace is ITicketMarketplace {
     }
 
     function _processTicketPurchase(uint128 eventId, uint128 ticketCount) private {
-    }
+   }
 }
