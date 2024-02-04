@@ -10,11 +10,11 @@ import {ITicketNFT} from "./interfaces/ITicketNFT.sol";
 contract TicketNFT is ERC1155, ITicketNFT {
     // your code goes here (you can do it!)
 
-    address payable public owner;
+    address public owner;
 
     constructor(string memory uri_) ERC1155(uri_) {
         // Making the owner variable payable means that this address is capable of receiving Ether. 
-        owner = payable(msg.sender);
+        owner = msg.sender;
     }
 
     // implement the mintFromMarketPlace function from the ITicketNFT interface
