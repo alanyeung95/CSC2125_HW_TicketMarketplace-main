@@ -9,11 +9,15 @@ import {ITicketMarketplace} from "./interfaces/ITicketMarketplace.sol";
 import "hardhat/console.sol";
 
 contract TicketMarketplace is ITicketMarketplace {
+    // hardhat official document is useful
+    // https://hardhat.org/tutorial/writing-and-compiling-contracts
+
     ITicketNFT public ticketNFT;
     address public owner;
     address public ERC20Address;
     address public nftContract;
     uint128 public currentEventId = 0;
+    uint128 public currentTicketId = 0;
 
     struct Event {
         uint128 nextTicketToSell;
@@ -74,9 +78,39 @@ contract TicketMarketplace is ITicketMarketplace {
     }
 
     function buyTickets(uint128 eventId, uint128 ticketCount) payable external override {
+        uint256 totalPrice;
+
+        // use unchecked block to allow overflow happen
+        unchecked {
+            totalPrice = events[eventId].pricePerTicket * ticketCount;
+        }
+
+        require(totalPrice / ticketCount == events[eventId].pricePerTicket, "Overflow happened while calculating the total price of tickets. Try buying smaller number of tickets.");
+        require(msg.value >= totalPrice, "Not enough funds supplied to buy the specified number of tickets.");
+        require(ticketCount <= events[eventId].maxTickets, "We don't have that many tickets left to sell!");
+
+        for (uint128 i = 0; i < ticketCount; i++) {
+            uint256 nftId = (uint256(eventId) << 128) + currentTicketId;
+            ticketNFT.mintFromMarketPlace(msg.sender, nftId);
+            currentTicketId++;
+        }
+
     }
 
     function buyTicketsERC20(uint128 eventId, uint128 ticketCount) external override {
+        /*
+        
+        // use unchecked block to allow overflow happen
+        unchecked {
+            totalPrice = events[eventId].pricePerTicketERC20 * ticketCount;
+        }
+
+        require(totalPrice / ticketCount == events[eventId].pricePerTicketERC20, "Overflow happened while calculating the total price of tickets. Try buying smaller number of tickets.");
+
+        _processTicketPurchase(eventId, ticketCount);
+
+        emit TicketsBought(eventId, ticketCount, "ERC20");
+        */
     }
 
     function setERC20Address(address newERC20Address) external override {
@@ -85,8 +119,5 @@ contract TicketMarketplace is ITicketMarketplace {
         ERC20Address = newERC20Address;
 
         emit ERC20AddressUpdate(newERC20Address);
-    }
-
-    function _processTicketPurchase(uint128 eventId, uint128 ticketCount) private {
     }
 }
